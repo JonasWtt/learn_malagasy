@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🇲🇬 Learn Malagasy</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Noto+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div id="app">
+    <!-- ===================== HEADER ===================== -->
+    <header class="app-header">
+      <div class="header-brand">
+        <span class="flag">🇲🇬</span>
+        <h1>Learn Malagasy</h1>
+      </div>
+      <button class="header-btn" id="search-toggle" title="Search vocabulary">🔍</button>
+    </header>
+
+    <!-- ===================== SEARCH OVERLAY ===================== -->
+    <div id="search-overlay" class="overlay hidden">
+      <div class="search-box">
+        <input type="text" id="search-input" placeholder="Search Malagasy or English..." autocomplete="off">
+        <button id="search-close">✕</button>
+      </div>
+      <div id="search-results" class="search-results"></div>
+    </div>
+
+    <!-- ===================== MAIN VIEW: LESSON LIST ===================== -->
+    <main id="lesson-list-view">
+      <section class="hero">
+        <h2>Tsara be, Mpiara-miasa!</h2>
+        <p>15 curated lessons with flashcards, vocabulary, and quizzes. Ready for Madagascar?</p>
+        <div class="hero-stats">
+          <span class="stat">🔥 <b>15</b> lessons</span>
+          <span class="stat">📚 <b>150+</b> cards</span>
+          <span class="stat">📝 <b>50+</b> quiz questions</span>
+        </div>
+      </section>
+
+      <section class="categories">
+        <button class="category-btn active" data-filter="all">All</button>
+        <button class="category-btn" data-filter="basics">Basics</button>
+        <button class="category-btn" data-filter="conversation">Conversation</button>
+        <button class="category-btn" data-filter="vocabulary">Vocabulary</button>
+        <button class="category-btn" data-filter="grammar">Grammar</button>
+      </section>
+
+      <section id="lessons-grid" class="lessons-grid">
+        <!-- Filled by JS -->
+      </section>
+    </main>
+
+    <!-- ===================== LESSON VIEW ===================== -->
+    <div id="lesson-view" class="view hidden">
+      <div class="lesson-nav">
+        <button class="back-btn" id="back-to-list">← All Lessons</button>
+        <h2 id="lesson-title"></h2>
+        <p id="lesson-desc"></p>
+      </div>
+
+      <div class="lesson-tabs">
+        <button class="tab-btn active" data-tab="cards">🗂️ Cards</button>
+        <button class="tab-btn" data-tab="vocab">📖 Vocab</button>
+        <button class="tab-btn" data-tab="quiz">✅ Quiz</button>
+      </div>
+
+      <!-- CARDS TAB -->
+      <div class="tab-content active" id="tab-cards">
+        <div class="card-progress">
+          <span id="card-counter">1 / 10</span>
+          <div class="progress-bar"><div id="card-progress-fill"></div></div>
+        </div>
+        <div class="flashcard-container">
+          <div class="flashcard" id="flashcard">
+            <div class="flashcard-face front" id="card-front"></div>
+            <div class="flashcard-face back" id="card-back"></div>
+          </div>
+        </div>
+        <div class="card-controls">
+          <button class="control-btn secondary" id="card-prev">← Prev</button>
+          <button class="control-btn primary" id="card-flip">Tap to flip ↻</button>
+          <button class="control-btn secondary" id="card-next">Next →</button>
+        </div>
+      </div>
+
+      <!-- VOCAB TAB -->
+      <div class="tab-content" id="tab-vocab">
+        <div class="vocab-list" id="vocab-list"></div>
+      </div>
+
+      <!-- QUIZ TAB -->
+      <div class="tab-content" id="tab-quiz">
+        <div class="quiz-box">
+          <div class="quiz-progress">
+            <span id="quiz-counter">1 / 3</span>
+            <div class="progress-bar"><div id="quiz-progress-fill"></div></div>
+          </div>
+          <div id="quiz-question" class="quiz-question"></div>
+          <div id="quiz-options" class="quiz-options"></div>
+          <div id="quiz-feedback" class="quiz-feedback hidden"></div>
+          <button class="control-btn primary hidden" id="quiz-next">Next →</button>
+        </div>
+        <div id="quiz-score" class="quiz-score hidden">
+          <h3>🎉 Quiz Complete!</h3>
+          <p id="score-text"></p>
+          <button class="control-btn primary" id="quiz-retry">Retry</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== FOOTER ===================== -->
+  <footer class="app-footer">
+    <p>Content sourced from Peace Corps & academic linguistics resources. Built for 🇲🇬.</p>
+  </footer>
+
+  <script src="lessons.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
