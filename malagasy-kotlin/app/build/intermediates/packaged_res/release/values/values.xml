@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:ns1="http://schemas.android.com/tools">
+    <color name="black">#FF000000</color>
+    <color name="primary">#E66A2C</color>
+    <color name="primary_dark">#C4521A</color>
+    <color name="secondary">#2D8A6E</color>
+    <color name="secondary_dark">#1E6B52</color>
+    <color name="splash_bg">#FAF9F6</color>
+    <color name="text_light">#6B6B6B</color>
+    <color name="white">#FFFFFFFF</color>
+    <string name="app_name">Learn Malagasy</string>
+    <style name="Theme.MalagasyApp" parent="Theme.Material3.Light.NoActionBar">
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryDark">@color/primary_dark</item>
+        <item name="colorAccent">@color/secondary</item>
+        <item name="android:statusBarColor">@color/splash_bg</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:navigationBarColor">@color/splash_bg</item>
+        <item name="android:windowLightNavigationBar" ns1:targetApi="27">true</item>
+    </style>
+</resources>

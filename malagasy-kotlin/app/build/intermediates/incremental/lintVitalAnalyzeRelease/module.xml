@@ -1,0 +1,19 @@
+<lint-module
+    format="1"
+    dir="/home/deploy/.hermes/profiles/coder/home/malagasy-app/malagasy-kotlin/app"
+    name=":app"
+    type="APP"
+    maven="MalagasyApp:app:"
+    agpVersion="8.2.0"
+    buildFolder="build"
+    bootClassPath="/home/deploy/.hermes/profiles/coder/home/android-sdk/platforms/android-35/android.jar:/home/deploy/.hermes/profiles/coder/home/android-sdk/build-tools/34.0.0/core-lambda-stubs.jar"
+    javaSourceLevel="17"
+    compileTarget="android-35"
+    neverShrinking="true">
+  <lintOptions
+      abortOnError="true"
+      absolutePaths="true"
+      checkReleaseBuilds="true"
+      explainIssues="true"/>
+  <variant name="release"/>
+</lint-module>

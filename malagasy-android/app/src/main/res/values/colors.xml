@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Learn Malagasy</string>
+    <color name="primary">#E66A2C</color>
+    <color name="primaryDark">#C4521A</color>
+    <color name="accent">#2D8A6E</color>
+    <color name="windowBackground">#FAF9F6</color>
+</resources>
