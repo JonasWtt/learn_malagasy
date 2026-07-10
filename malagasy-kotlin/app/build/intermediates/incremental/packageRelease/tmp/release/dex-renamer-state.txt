@@ -1,4 +1,4 @@
-#Fri Jul 10 13:51:37 UTC 2026
+#Fri Jul 10 14:44:20 UTC 2026
 base.0=/home/deploy/.hermes/profiles/coder/home/malagasy-app/malagasy-kotlin/app/build/intermediates/dex/release/mergeDexRelease/classes.dex
 renamed.0=classes.dex
 path.0=classes.dex
