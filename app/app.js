@@ -137,9 +137,26 @@
   const searchClose = $('search-close');
   const searchResults = $('search-results');
 
+  // Flat vocab index for search — built from all lessons
+  const ALL_VOCAB = [];
+  LESSONS.forEach(l => {
+    (l.vocab || []).forEach(v => {
+      ALL_VOCAB.push({
+        malagasy: v.malagasy || '',
+        english: v.english || '',
+        german: v.german || '',
+        french: v.french || '',
+        lessonId: l.id,
+        lessonTitle: l.title
+      });
+    });
+  });
+
   // ======== LANGUAGE ========
   function toggleLanguage() {
-    currentLanguage = currentLanguage === 'en' ? 'de' : 'en';
+    const order = ['en', 'de', 'fr'];
+    const idx = order.indexOf(currentLanguage);
+    currentLanguage = order[(idx + 1) % order.length];
     document.body.setAttribute('data-lang', currentLanguage);
     // Re-render current view if in a lesson
     if (currentLesson) {
@@ -151,9 +168,34 @@
       renderVocab();
       renderQuiz();
     }
-    // Update toggle button text
+    // Re-render lesson list (descriptions, category labels)
+    const activeFilter = document.querySelector('.category-btn.active');
+    renderLessons(activeFilter ? activeFilter.dataset.filter : 'all');
+    // Update hero text
+    updateHero();
+    // Update toggle button text — show NEXT language flag
     const langBtn = document.getElementById('lang-toggle');
-    if (langBtn) langBtn.textContent = currentLanguage === 'en' ? '🇩🇪' : '🇬🇧';
+    if (langBtn) {
+      const nextLang = order[(order.indexOf(currentLanguage) + 1) % order.length];
+      const flags = { en: '🇬🇧', de: '🇩🇪', fr: '🇫🇷' };
+      langBtn.textContent = flags[nextLang];
+    }
+  }
+
+  function updateHero() {
+    const heroTitle = document.querySelector('.hero h2');
+    const heroSubtitle = document.querySelector('.hero p');
+    const heroStats = document.querySelectorAll('.hero-stats .stat');
+    if (heroTitle) heroTitle.textContent = t('heroTitle');
+    if (heroSubtitle) heroSubtitle.textContent = t('heroSubtitle');
+    if (heroStats.length >= 3) {
+      const lessons = LESSONS.length;
+      const cards = LESSONS.reduce((s, l) => s + (l.cards?.length || 0), 0);
+      const quizCount = Object.keys(typeof QUIZZES !== 'undefined' ? QUIZZES : {}).reduce((s, k) => s + QUIZZES[k].length, 0);
+      heroStats[0].innerHTML = `🔥 <b>${lessons}</b> ${t('heroStatsLessons')}`;
+      heroStats[1].innerHTML = `📚 <b>${cards}</b> ${t('heroStatsCards')}`;
+      heroStats[2].innerHTML = `📝 <b>${quizCount}</b> ${t('heroStatsQuiz')}`;
+    }
   }
 
   // ======== UI STRINGS ========
@@ -229,6 +271,42 @@
       filterGrammar: 'Grammatik',
       cardsLabel: ' Karten',
       footer: 'Inhalte von Peace Corps & akademischen Linguistik-Ressourcen. Gebaut fuer 🇲🇬.',
+    },
+    fr: {
+      flip: 'Touchez pour retourner ↻',
+      flipBack: 'Touchez pour retourner ↺',
+      noVocab: 'Pas encore de vocabulaire pour cette leçon.',
+      noQuiz: 'Pas encore de questions pour cette leçon.',
+      noContent: 'Aucun contenu de grammaire disponible.',
+      correct: '✅ Correct ! Bien joué.',
+      wrong: '❌ Faux. La réponse est : ',
+      quizPerfect: 'Score parfait ! {0}/{1} — prêt pour Madagascar ! 🎉',
+      quizGreat: 'Bon travail ! {0}/{1} — presque ! 🔥',
+      quizOkay: 'Pas mal ! {0}/{1} — continue à pratiquer ! 💪',
+      quizLow: 'Tu as {0}/{1}. Révise les cartes et réessaie ! 📚',
+      searchPlaceholder: 'Rechercher en malgache ou en français...',
+      noSearchResults: 'Aucun mot trouvé. Essayez une autre recherche.',
+      backToList: '← Toutes les leçons',
+      tabCards: '🗂️ Cartes',
+      tabText: '📝 Texte',
+      tabVocab: '📖 Vocabulaire',
+      tabQuiz: '✅ Quiz',
+      next: 'Suivant →',
+      prev: '← Précédent',
+      retry: 'Réessayer',
+      quizComplete: '🎉 Quiz terminé !',
+      heroTitle: 'Tsara be, Mpiara-miasa !',
+      heroSubtitle: '29 leçons avec cartes mémoire, vocabulaire et quiz. Prêt pour Madagascar ?',
+      heroStatsLessons: 'leçons',
+      heroStatsCards: 'cartes',
+      heroStatsQuiz: 'questions',
+      filterAll: 'Tout',
+      filterBasics: 'Bases',
+      filterConversation: 'Conversation',
+      filterVocabulary: 'Vocabulaire',
+      filterGrammar: 'Grammaire',
+      cardsLabel: ' cartes',
+      footer: 'Contenu des Peace Corps et ressources linguistiques académiques. Fait pour 🇲🇬.',
     }
   };
 
@@ -344,7 +422,9 @@
     cardProgressFill.style.width = `${((currentCardIndex + 1) / total) * 100}%`;
 
     // Language switching for card front
-    const frontText = currentLanguage === 'de' && card.front_de ? card.front_de : card.front;
+    let frontText = card.front;
+    if (currentLanguage === 'de' && card.front_de) frontText = card.front_de;
+    else if (currentLanguage === 'fr' && card.front_fr) frontText = card.front_fr;
     cardFront.textContent = frontText;
     cardBack.textContent = card.back;
 
@@ -367,7 +447,7 @@
   // ======== GRAMMAR TEXT ========
   function renderGrammar() {
     const sections = currentLesson.content || {};
-    const lang = currentLanguage === 'de' ? 'de' : 'en';
+    const lang = currentLanguage; // 'en', 'de', or 'fr'
     const textSections = sections[lang] || sections['en'] || [];
 
     // Show grammar content, hide card UI
@@ -448,7 +528,9 @@
     vocab.forEach(v => {
       const item = document.createElement('div');
       item.className = 'vocab-item';
-      const transText = currentLanguage === 'de' && v.german ? v.german : v.english;
+      let transText = v.english;
+      if (currentLanguage === 'de' && v.german) transText = v.german;
+      else if (currentLanguage === 'fr' && v.french) transText = v.french;
       item.innerHTML = `
         <span class="word">${v.malagasy}</span>
         <span class="trans">${transText}</span>
@@ -459,7 +541,7 @@
 
   // ======== QUIZ ========
   function renderQuiz() {
-    const questions = currentLesson.quiz || [];
+    const questions = (typeof QUIZZES !== 'undefined' && QUIZZES[currentLesson.id]) || currentLesson.quiz || [];
     const total = questions.length;
 
     // Reset UI
@@ -479,13 +561,17 @@
     quizProgressFill.style.width = `${((currentQuizIndex + 1) / total) * 100}%`;
 
     // Language switching for quiz
-    const qText = currentLanguage === 'de' && q.question_de ? q.question_de : q.question;
+    let qText = q.question;
+    if (currentLanguage === 'de' && q.question_de) qText = q.question_de;
+    else if (currentLanguage === 'fr' && q.question_fr) qText = q.question_fr;
     quizQuestion.textContent = qText;
     quizOptions.innerHTML = '';
     quizFeedback.classList.add('hidden');
     btnQuizNext.classList.add('hidden');
 
-    const opts = currentLanguage === 'de' && q.options_de ? q.options_de : q.options;
+    let opts = q.options;
+    if (currentLanguage === 'de' && q.options_de) opts = q.options_de;
+    else if (currentLanguage === 'fr' && q.options_fr) opts = q.options_fr;
     opts.forEach((opt, i) => {
       const btn = document.createElement('button');
       btn.className = 'quiz-option';
@@ -496,7 +582,7 @@
   }
 
   function answerQuiz(selectedIndex, btnEl) {
-    const questions = currentLesson.quiz || [];
+    const questions = (typeof QUIZZES !== 'undefined' && QUIZZES[currentLesson.id]) || currentLesson.quiz || [];
     const q = questions[currentQuizIndex];
     const isCorrect = selectedIndex === q.correct;
 
@@ -512,7 +598,11 @@
       quizFeedback.className = 'quiz-feedback correct';
     } else {
       btnEl.classList.add('wrong');
-      quizFeedback.textContent = `${t('wrong')}${q.options[q.correct]}`;
+      // Show correct answer in the current language
+      let correctOpts = q.options;
+      if (currentLanguage === 'de' && q.options_de) correctOpts = q.options_de;
+      else if (currentLanguage === 'fr' && q.options_fr) correctOpts = q.options_fr;
+      quizFeedback.textContent = `${t('wrong')}${correctOpts[q.correct]}`;
       quizFeedback.className = 'quiz-feedback wrong';
     }
 
@@ -521,7 +611,7 @@
   }
 
   function nextQuiz() {
-    const questions = currentLesson.quiz || [];
+    const questions = (typeof QUIZZES !== 'undefined' && QUIZZES[currentLesson.id]) || currentLesson.quiz || [];
     if (currentQuizIndex < questions.length - 1) {
       currentQuizIndex++;
       renderQuiz();
@@ -531,7 +621,7 @@
   }
 
   function showQuizScore() {
-    const questions = currentLesson.quiz || [];
+    const questions = (typeof QUIZZES !== 'undefined' && QUIZZES[currentLesson.id]) || currentLesson.quiz || [];
     const total = questions.length;
     const percent = Math.round((quizScore / total) * 100);
 
@@ -580,7 +670,8 @@
     const matches = ALL_VOCAB.filter(v =>
       v.malagasy.toLowerCase().includes(query) ||
       v.english.toLowerCase().includes(query) ||
-      (v.german && v.german.toLowerCase().includes(query))
+      (v.german && v.german.toLowerCase().includes(query)) ||
+      (v.french && v.french.toLowerCase().includes(query))
     ).slice(0, 20);
 
     if (matches.length === 0) {
@@ -588,16 +679,20 @@
       return;
     }
 
-    searchResults.innerHTML = matches.map(v => `
+    searchResults.innerHTML = matches.map(v => {
+      let trans = v.english;
+      if (currentLanguage === 'de' && v.german) trans = v.german;
+      else if (currentLanguage === 'fr' && v.french) trans = v.french;
+      return `
       <div class="search-result-item" data-lesson="${v.lessonId}">
         <div>
           <span class="word">${v.malagasy}</span>
           <span style="color:var(--color-text-light)"> — </span>
-          <span class="trans">${v.english}</span>
+          <span class="trans">${trans}</span>
         </div>
         <span class="badge">${v.lessonTitle}</span>
-      </div>
-    `).join('');
+      </div>`;
+    }).join('');
 
     // Bind click to jump to lesson
     searchResults.querySelectorAll('.search-result-item').forEach(item => {

@@ -92,36 +92,6 @@ html, body {
 
 .header-btn:hover { background: var(--color-border); transform: scale(1.05); }
 
-.header-actions {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding-right: 4px;
-}
-
-.lang-select {
-  appearance: none;
-  -webkit-appearance: none;
-  background: var(--color-bg);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-sm);
-  padding: 6px 28px 6px 10px;
-  font-size: 14px;
-  font-weight: 700;
-  font-family: inherit;
-  color: var(--color-text);
-  cursor: pointer;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b6b6b' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 8px center;
-  transition: border-color 0.2s;
-}
-
-.lang-select:focus {
-  outline: none;
-  border-color: var(--color-primary);
-}
-
 /* ========== SEARCH OVERLAY ========== */
 .overlay {
   position: fixed;
@@ -631,11 +601,6 @@ html, body {
 
 .quiz-feedback.correct { background: #e8f5e9; color: var(--color-correct); }
 .quiz-feedback.wrong { background: #fdecea; color: var(--color-wrong); }
-
-#quiz-next {
-  display: block;
-  margin-left: auto;
-}
 
 .quiz-score {
   text-align: center;
