@@ -1,0 +1,38 @@
+# Gradle
+malagasy-kotlin/.gradle/
+malagasy-kotlin/build/
+malagasy-kotlin/app/build/
+malagasy-kotlin/local.properties
+
+# Android Studio / IntelliJ
+*.iml
+.idea/
+*.swp
+
+# APKs
+*.apk
+*.apk.idsig
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Scripts (one-off build helpers, not app source)
+add_*.py
+add_*.js
+build_all.js
+build_quizzes.py
+count_quizzes.py
+expand_quizzes.*
+split_quizzes.js
+generate_*.py
+generator.py
+translate_*.py
+update_*.py
+list_untranslated.py
+export_remaining.py
+fix_remaining.py
+new_lessons_data.js
+de_vocab.js
+fr_vocab.js
+malagasy_learning_resources.md

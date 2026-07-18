@@ -11,6 +11,79 @@
   let currentQuizIndex = 0;
   let quizScore = 0;
   let isFlipped = false;
+  let currentLanguage = 'en'; // 'en' or 'de'
+
+  // ======== TAP HELPER ========
+  // Android WebView: click events don't fire on <div> elements.
+  // Use touchstart + touchend for reliable tap detection.
+  function addTapHandler(el, handler) {
+    if (!el) return;
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let touchMoved = false;
+    const MOVE_THRESHOLD = 10;
+
+    el.addEventListener('touchstart', function(e) {
+      touchMoved = false;
+      if (e.touches.length === 1) {
+        touchStartX = e.touches[0].clientX;
+        touchStartY = e.touches[0].clientY;
+      }
+    }, { passive: true });
+
+    el.addEventListener('touchmove', function(e) {
+      if (e.touches.length === 1) {
+        const dx = Math.abs(e.touches[0].clientX - touchStartX);
+        const dy = Math.abs(e.touches[0].clientY - touchStartY);
+        if (dx > MOVE_THRESHOLD || dy > MOVE_THRESHOLD) {
+          touchMoved = true;
+        }
+      }
+    }, { passive: true });
+
+    el.addEventListener('touchend', function(e) {
+      if (!touchMoved) {
+        e.preventDefault();
+        handler();
+      }
+    }, { passive: false });
+
+    // Fallback for desktop / mouse
+    el.addEventListener('click', function(e) {
+      handler();
+    });
+  }
+
+  // ======== NATIVE BACK BRIDGE ========
+  // The web app is a single-page app loaded at one URL, so WebView.canGoBack()
+  // is always false and Android's back gesture would close the app. Instead
+  // we report in-page navigation depth to the native layer (AndroidBack) so
+  // the OnBackPressedDispatcher can decide: undo the topmost overlay, or exit.
+  // window.__appBack() is invoked by the native back handler (hardware button
+  // or predictive-back swipe) to perform the undo.
+  function navPush() { try { AndroidBack.pushNav(); } catch (e) {} }
+  function navPop()  { try { AndroidBack.popNav();  } catch (e) {} }
+  function navReset(){ try { AndroidBack.resetNav(); } catch (e) {} }
+
+  // Stack of "close" handlers, top-most last. Each overlay pushes its closer
+  // when it opens and pops it (plus a nav level) when it closes.
+  // window.__appBack() calls the top handler WITHOUT popping — the handler's
+  // own close path does the popping, so nav depth stays in sync.
+  const backStack = [];
+  function pushBackHandler(fn) { backStack.push(fn); navPush(); }
+  function popBackHandler() {
+    if (backStack.length) backStack.pop();
+    navPop();
+  }
+
+  window.__appBack = function() {
+    const fn = backStack[backStack.length - 1];
+    if (typeof fn === 'function') {
+      try { fn(); } catch (e) { popBackHandler(); }
+    } else {
+      popBackHandler();
+    }
+  };
 
   // ======== DOM REFERENCES ========
   const $ = id => document.getElementById(id);
@@ -32,12 +105,16 @@
   // Cards
   const cardCounter = $('card-counter');
   const cardProgressFill = $('card-progress-fill');
+  const cardProgressUI = $('card-progress-ui');
+  const flashcardContainer = $('flashcard-container');
+  const cardControls = $('card-controls');
   const flashcard = $('flashcard');
   const cardFront = $('card-front');
   const cardBack = $('card-back');
   const btnFlip = $('card-flip');
   const btnPrev = $('card-prev');
   const btnNext = $('card-next');
+  const grammarContent = $('grammar-content');
 
   // Vocab
   const vocabList = $('vocab-list');
@@ -60,10 +137,113 @@
   const searchClose = $('search-close');
   const searchResults = $('search-results');
 
+  // ======== LANGUAGE ========
+  function toggleLanguage() {
+    currentLanguage = currentLanguage === 'en' ? 'de' : 'en';
+    document.body.setAttribute('data-lang', currentLanguage);
+    // Re-render current view if in a lesson
+    if (currentLesson) {
+      if (currentLesson.category === 'grammar' && currentLesson.content) {
+        renderGrammar();
+      } else {
+        renderCard();
+      }
+      renderVocab();
+      renderQuiz();
+    }
+    // Update toggle button text
+    const langBtn = document.getElementById('lang-toggle');
+    if (langBtn) langBtn.textContent = currentLanguage === 'en' ? '🇩🇪' : '🇬🇧';
+  }
+
+  // ======== UI STRINGS ========
+  const STRINGS = {
+    en: {
+      flip: 'Tap to flip ↻',
+      flipBack: 'Tap to flip ↺',
+      noVocab: 'No vocabulary for this lesson yet.',
+      noQuiz: 'No quiz questions for this lesson yet.',
+      noContent: 'No grammar content available.',
+      correct: '✅ Correct! Well done.',
+      wrong: '❌ Wrong. The answer is: ',
+      quizPerfect: "Perfect score! {0}/{1} — you're ready for Madagascar! 🎉",
+      quizGreat: 'Great job! {0}/{1} — almost there! 🔥',
+      quizOkay: 'Not bad! {0}/{1} — keep practicing! 💪',
+      quizLow: 'You got {0}/{1}. Review the cards and try again! 📚',
+      searchPlaceholder: 'Search Malagasy or English...',
+      noSearchResults: 'No words found. Try a different search.',
+      backToList: '← All Lessons',
+      tabCards: '🗂️ Cards',
+      tabText: '📝 Text',
+      tabVocab: '📖 Vocab',
+      tabQuiz: '✅ Quiz',
+      next: 'Next →',
+      prev: '← Prev',
+      retry: 'Retry',
+      quizComplete: '🎉 Quiz Complete!',
+      heroTitle: 'Tsara be, Mpiara-miasa!',
+      heroSubtitle: '20 curated lessons with flashcards, vocabulary, and quizzes. Ready for Madagascar?',
+      heroStatsLessons: 'lessons',
+      heroStatsCards: 'cards',
+      heroStatsQuiz: 'quiz questions',
+      filterAll: 'All',
+      filterBasics: 'Basics',
+      filterConversation: 'Conversation',
+      filterVocabulary: 'Vocabulary',
+      filterGrammar: 'Grammar',
+      cardsLabel: ' cards',
+      footer: 'Content sourced from Peace Corps & academic linguistics resources. Built for 🇲🇬.',
+    },
+    de: {
+      flip: 'Zum Umdrehen tippen ↻',
+      flipBack: 'Zum Umdrehen tippen ↺',
+      noVocab: 'Noch kein Vokabular fuer diese Lektion.',
+      noQuiz: 'Noch keine Quizfragen fuer diese Lektion.',
+      noContent: 'Kein Grammatik-Inhalt verfuegbar.',
+      correct: '✅ Richtig! Gut gemacht.',
+      wrong: '❌ Falsch. Die Antwort ist: ',
+      quizPerfect: 'Perfekte Punktzahl! {0}/{1} — Du bist bereit fuer Madagaskar! 🎉',
+      quizGreat: 'Gut gemacht! {0}/{1} — fast geschafft! 🔥',
+      quizOkay: 'Nicht schlecht! {0}/{1} — weiter ueben! 💪',
+      quizLow: 'Du hast {0}/{1}. Sieh dir die Karten an und versuch es nochmal! 📚',
+      searchPlaceholder: 'Suche Malagasy oder Deutsch...',
+      noSearchResults: 'Keine Woerter gefunden. Versuche eine andere Suche.',
+      backToList: '← Alle Lektionen',
+      tabCards: '🗂️ Karten',
+      tabText: '📝 Text',
+      tabVocab: '📖 Vokabular',
+      tabQuiz: '✅ Quiz',
+      next: 'Weiter →',
+      prev: '← Zurueck',
+      retry: 'Nochmal',
+      quizComplete: '🎉 Quiz Abgeschlossen!',
+      heroTitle: 'Tsara be, Mpiara-miasa!',
+      heroSubtitle: '20 kuratierte Lektionen mit Karteikarten, Vokabular und Quiz. Bereit fuer Madagaskar?',
+      heroStatsLessons: 'Lektionen',
+      heroStatsCards: 'Karten',
+      heroStatsQuiz: 'Quizfragen',
+      filterAll: 'Alle',
+      filterBasics: 'Grundlagen',
+      filterConversation: 'Konversation',
+      filterVocabulary: 'Vokabular',
+      filterGrammar: 'Grammatik',
+      cardsLabel: ' Karten',
+      footer: 'Inhalte von Peace Corps & akademischen Linguistik-Ressourcen. Gebaut fuer 🇲🇬.',
+    }
+  };
+
+  function t(key, ...args) {
+    let s = STRINGS[currentLanguage]?.[key] || STRINGS.en[key] || key;
+    args.forEach((arg, i) => { s = s.replace(`{${i}}`, arg); });
+    return s;
+  }
+
   // ======== INIT ========
   function init() {
+    navReset();
     renderLessons('all');
     bindEvents();
+    document.body.setAttribute('data-lang', 'en');
   }
 
   // ======== RENDER LESSON LIST ========
@@ -82,16 +262,22 @@
         <p class="desc">${lesson.description}</p>
         <div class="meta">
           <span class="badge ${lesson.category}">${lesson.category}</span>
-          <span class="badge">${lesson.cards?.length || 0} cards</span>
+          <span class="badge">${lesson.cards?.length || 0}${t('cardsLabel')}</span>
         </div>
       `;
-      card.addEventListener('click', () => openLesson(lesson));
+      addTapHandler(card, () => openLesson(lesson));
       lessonsGrid.appendChild(card);
     });
   }
 
   // ======== OPEN LESSON ========
   function openLesson(lesson) {
+    // Only count this as a new navigation level when we're coming from the
+    // home list. If a lesson is already open (e.g. navigating lesson→lesson
+    // via search), we're replacing, not descending — don't push another level.
+    const descendingFromHome = !lessonListView.classList.contains('hidden');
+    if (descendingFromHome) pushBackHandler(backToList);
+
     currentLesson = lesson;
     currentCardIndex = 0;
     currentQuizIndex = 0;
@@ -102,11 +288,20 @@
     lessonTitle.textContent = `${lesson.emoji} ${lesson.title}`;
     lessonDesc.textContent = lesson.description;
 
-    // Reset tabs to cards
+    // Update tab labels based on category
+    const isGrammar = lesson.category === 'grammar';
+    const cardsTabBtn = document.querySelector('.tab-btn[data-tab="cards"]');
+    if (cardsTabBtn) cardsTabBtn.textContent = isGrammar ? t('tabText') : t('tabCards');
+
+    // Reset tabs to cards/text
     switchTab('cards');
 
     // Render content
-    renderCard();
+    if (isGrammar && lesson.content) {
+      renderGrammar();
+    } else {
+      renderCard();
+    }
     renderVocab();
     renderQuiz();
 
@@ -118,6 +313,8 @@
 
   // ======== BACK TO LIST ========
   function backToList() {
+    // Only pop if a lesson was actually open (we were at a nav level).
+    if (currentLesson) popBackHandler();
     lessonView.classList.add('hidden');
     lessonListView.classList.remove('hidden');
     currentLesson = null;
@@ -136,6 +333,7 @@
 
   // ======== FLASHCARDS ========
   function renderCard() {
+    hideGrammar();
     const cards = currentLesson.cards || [];
     const total = cards.length;
     const card = cards[currentCardIndex];
@@ -145,13 +343,15 @@
     cardCounter.textContent = `${currentCardIndex + 1} / ${total}`;
     cardProgressFill.style.width = `${((currentCardIndex + 1) / total) * 100}%`;
 
-    cardFront.textContent = card.front;
+    // Language switching for card front
+    const frontText = currentLanguage === 'de' && card.front_de ? card.front_de : card.front;
+    cardFront.textContent = frontText;
     cardBack.textContent = card.back;
 
     // Reset flip
     isFlipped = false;
     flashcard.classList.remove('flipped');
-    btnFlip.textContent = 'Tap to flip ↻';
+    btnFlip.textContent = t('flip');
 
     // Button states
     btnPrev.disabled = currentCardIndex === 0;
@@ -161,7 +361,63 @@
   function flipCard() {
     isFlipped = !isFlipped;
     flashcard.classList.toggle('flipped', isFlipped);
-    btnFlip.textContent = isFlipped ? 'Tap to flip ↺' : 'Tap to flip ↻';
+    btnFlip.textContent = isFlipped ? t('flipBack') : t('flip');
+  }
+
+  // ======== GRAMMAR TEXT ========
+  function renderGrammar() {
+    const sections = currentLesson.content || {};
+    const lang = currentLanguage === 'de' ? 'de' : 'en';
+    const textSections = sections[lang] || sections['en'] || [];
+
+    // Show grammar content, hide card UI
+    grammarContent.classList.remove('hidden');
+    cardProgressUI.classList.add('hidden');
+    flashcardContainer.classList.add('hidden');
+    cardControls.classList.add('hidden');
+
+    if (!textSections.length) {
+      grammarContent.innerHTML = '<p style="text-align:center;color:var(--color-text-light);padding:2rem">' + t('noContent') + '</p>';
+      return;
+    }
+
+    let html = '<div class="grammar-scroll">';
+    textSections.forEach((sec, i) => {
+      html += '<div class="grammar-block">';
+      html += '<h3 class="grammar-heading">' + sec.heading + '</h3>';
+      // Body text: split on pipe to separate individual points
+      const lines = sec.body.split(' | ').map(s => s.trim()).filter(Boolean);
+      lines.forEach((line, idx) => {
+        let inner = '';
+        if (line.includes('Example:') || line.includes('Beispiel:')) {
+          inner = '<div class="grammar-example">' + line + '</div>';
+        } else if (line.includes('=') || line.includes(':')) {
+          inner = '<div class="grammar-line">' + line + '</div>';
+        } else {
+          inner = '<p class="grammar-body">' + line + '</p>';
+        }
+        html += '<div class="grammar-point">' + inner + '</div>';
+        // Add spacer after every point except the last one in this section
+        if (idx < lines.length - 1) {
+          html += '<div class="grammar-spacer"></div>';
+        }
+        // Extra spacer after examples so next explanation starts on a fresh row
+        if ((line.includes('Example:') || line.includes('Beispiel:')) && idx < lines.length - 1) {
+          html += '<div class="grammar-spacer"></div>';
+        }
+      });
+      html += '</div>';
+    });
+    html += '</div>';
+
+    grammarContent.innerHTML = html;
+  }
+
+  function hideGrammar() {
+    grammarContent.classList.add('hidden');
+    cardProgressUI.classList.remove('hidden');
+    flashcardContainer.classList.remove('hidden');
+    cardControls.classList.remove('hidden');
   }
 
   function nextCard() {
@@ -185,16 +441,17 @@
     vocabList.innerHTML = '';
 
     if (vocab.length === 0) {
-      vocabList.innerHTML = '<p style="text-align:center;color:var(--color-text-light)">No vocabulary for this lesson yet.</p>';
+      vocabList.innerHTML = `<p style="text-align:center;color:var(--color-text-light)">${t('noVocab')}</p>`;
       return;
     }
 
     vocab.forEach(v => {
       const item = document.createElement('div');
       item.className = 'vocab-item';
+      const transText = currentLanguage === 'de' && v.german ? v.german : v.english;
       item.innerHTML = `
         <span class="word">${v.malagasy}</span>
-        <span class="trans">${v.english}</span>
+        <span class="trans">${transText}</span>
       `;
       vocabList.appendChild(item);
     });
@@ -210,7 +467,7 @@
     $('quiz-box')?.classList.remove('hidden');
 
     if (total === 0) {
-      quizQuestion.textContent = 'No quiz questions for this lesson yet.';
+      quizQuestion.textContent = t('noQuiz');
       quizOptions.innerHTML = '';
       quizCounter.textContent = '0 / 0';
       quizProgressFill.style.width = '0%';
@@ -221,12 +478,15 @@
     quizCounter.textContent = `${currentQuizIndex + 1} / ${total}`;
     quizProgressFill.style.width = `${((currentQuizIndex + 1) / total) * 100}%`;
 
-    quizQuestion.textContent = q.question;
+    // Language switching for quiz
+    const qText = currentLanguage === 'de' && q.question_de ? q.question_de : q.question;
+    quizQuestion.textContent = qText;
     quizOptions.innerHTML = '';
     quizFeedback.classList.add('hidden');
     btnQuizNext.classList.add('hidden');
 
-    q.options.forEach((opt, i) => {
+    const opts = currentLanguage === 'de' && q.options_de ? q.options_de : q.options;
+    opts.forEach((opt, i) => {
       const btn = document.createElement('button');
       btn.className = 'quiz-option';
       btn.textContent = opt;
@@ -248,11 +508,11 @@
 
     if (isCorrect) {
       quizScore++;
-      quizFeedback.textContent = '✅ Correct! Well done.';
+      quizFeedback.textContent = t('correct');
       quizFeedback.className = 'quiz-feedback correct';
     } else {
       btnEl.classList.add('wrong');
-      quizFeedback.textContent = `❌ Wrong. The answer is: ${q.options[q.correct]}`;
+      quizFeedback.textContent = `${t('wrong')}${q.options[q.correct]}`;
       quizFeedback.className = 'quiz-feedback wrong';
     }
 
@@ -279,10 +539,10 @@
     quizScoreEl.classList.remove('hidden');
 
     let msg = '';
-    if (percent === 100) msg = `Perfect score! ${quizScore}/${total} — you're ready for Madagascar! 🎉`;
-    else if (percent >= 80) msg = `Great job! ${quizScore}/${total} — almost there! 🔥`;
-    else if (percent >= 50) msg = `Not bad! ${quizScore}/${total} — keep practicing! 💪`;
-    else msg = `You got ${quizScore}/${total}. Review the cards and try again! 📚`;
+    if (percent === 100) msg = t('quizPerfect', quizScore, total);
+    else if (percent >= 80) msg = t('quizGreat', quizScore, total);
+    else if (percent >= 50) msg = t('quizOkay', quizScore, total);
+    else msg = t('quizLow', quizScore, total);
 
     scoreText.textContent = msg;
   }
@@ -301,10 +561,13 @@
     searchInput.value = '';
     searchInput.focus();
     searchResults.innerHTML = '';
+    pushBackHandler(closeSearch);
   }
 
   function closeSearch() {
+    if (searchOverlay.classList.contains('hidden')) return;
     searchOverlay.classList.add('hidden');
+    popBackHandler();
   }
 
   function doSearch(query) {
@@ -316,11 +579,12 @@
 
     const matches = ALL_VOCAB.filter(v =>
       v.malagasy.toLowerCase().includes(query) ||
-      v.english.toLowerCase().includes(query)
+      v.english.toLowerCase().includes(query) ||
+      (v.german && v.german.toLowerCase().includes(query))
     ).slice(0, 20);
 
     if (matches.length === 0) {
-      searchResults.innerHTML = '<div class="no-results">No words found. Try a different search.</div>';
+      searchResults.innerHTML = `<div class="no-results">${t('noSearchResults')}</div>`;
       return;
     }
 
@@ -337,7 +601,7 @@
 
     // Bind click to jump to lesson
     searchResults.querySelectorAll('.search-result-item').forEach(item => {
-      item.addEventListener('click', () => {
+      addTapHandler(item, () => {
         const lessonId = item.dataset.lesson;
         const lesson = LESSONS.find(l => l.id === lessonId);
         if (lesson) {
@@ -369,7 +633,7 @@
 
     // Flashcard
     btnFlip.addEventListener('click', flipCard);
-    flashcard.addEventListener('click', flipCard);
+    addTapHandler(flashcard, flipCard);
     btnNext.addEventListener('click', nextCard);
     btnPrev.addEventListener('click', prevCard);
 
@@ -390,6 +654,10 @@
     // Quiz
     btnQuizNext.addEventListener('click', nextQuiz);
     btnQuizRetry.addEventListener('click', retryQuiz);
+
+    // Language toggle
+    const langToggle = document.getElementById('lang-toggle');
+    if (langToggle) langToggle.addEventListener('click', toggleLanguage);
 
     // Search
     searchToggle.addEventListener('click', openSearch);
