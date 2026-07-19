@@ -69,6 +69,12 @@ html, body {
   font-size: 28px;
 }
 
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .header-brand h1 {
   font-size: 20px;
   font-weight: 800;
