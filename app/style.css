@@ -718,3 +718,82 @@ html, body {
   .flashcard { min-height: 180px; }
   .flashcard-face { padding: 20px; font-size: 18px; }
 }
+
+/* ===================== READINGS SECTION ===================== */
+.readings-section {
+  padding: 16px 20px 30px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.section-heading {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--color-text);
+  margin: 8px 0 4px;
+}
+.section-sub {
+  font-size: 14px;
+  color: var(--color-text-light);
+  margin: 0 0 16px;
+}
+.badge.reading {
+  background: #e8dff5;
+  color: #6b4ea8;
+}
+
+/* ===================== READING VIEWER ===================== */
+.reading-box {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 4px 0 20px;
+}
+.reading-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.reading-level {
+  background: #e8dff5;
+  color: #6b4ea8;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 14px;
+  font-size: 13px;
+}
+.reading-text {
+  font-family: 'Noto Sans', sans-serif;
+  font-size: 18px;
+  line-height: 1.7;
+  color: var(--color-text);
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 20px 22px;
+  white-space: pre-line;
+  margin-bottom: 10px;
+}
+.reading-translation {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--color-text-light);
+  background: #f5f3ee;
+  border-left: 3px solid var(--color-accent);
+  border-radius: 8px;
+  padding: 14px 18px;
+  white-space: pre-line;
+  margin-bottom: 10px;
+  font-style: italic;
+}
+.glossary-heading {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-text);
+  margin: 18px 0 8px;
+}
+.glossary-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 8px;
+  margin-bottom: 16px;
+}

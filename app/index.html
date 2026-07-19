@@ -55,6 +55,15 @@
       <section id="lessons-grid" class="lessons-grid">
         <!-- Filled by JS -->
       </section>
+
+      <!-- ===================== READINGS SECTION ===================== -->
+      <section class="readings-section">
+        <h3 class="section-heading" id="readings-heading">📖 Reading Comprehension</h3>
+        <p class="section-sub" id="readings-sub">Short texts with translation, glossary, and quiz questions.</p>
+        <div id="readings-grid" class="lessons-grid">
+          <!-- Filled by JS -->
+        </div>
+      </section>
     </main>
 
     <!-- ===================== LESSON VIEW ===================== -->
@@ -66,9 +75,24 @@
       </div>
 
       <div class="lesson-tabs">
+        <button class="tab-btn" data-tab="reading" style="display:none">📝 Text</button>
         <button class="tab-btn active" data-tab="cards">🗂️ Cards</button>
         <button class="tab-btn" data-tab="vocab">📖 Vocab</button>
         <button class="tab-btn" data-tab="quiz">✅ Quiz</button>
+      </div>
+
+      <!-- READING TAB (shown only for readings) -->
+      <div class="tab-content" id="tab-reading">
+        <div class="reading-box">
+          <div class="reading-header">
+            <span class="reading-level"></span>
+            <button class="control-btn secondary" id="reading-toggle-trans">🌐 Show translation</button>
+          </div>
+          <div class="reading-text" id="reading-text"></div>
+          <div class="reading-translation hidden" id="reading-translation"></div>
+          <h4 class="glossary-heading">Glossary</h4>
+          <div class="glossary-list" id="glossary-list"></div>
+        </div>
       </div>
 
       <!-- CARDS TAB -->
@@ -119,12 +143,13 @@
 
   <!-- ===================== FOOTER ===================== -->
   <footer class="app-footer">
-    <p>Content sourced from Peace Corps & academic linguistics resources. Built for 🇲🇬.</p>
+    <p>Content sourced from Peace Corps &amp; academic linguistics resources. Built for 🇲🇬.</p>
   </footer>
 
   <!-- Touch event polyfill for Android WebView -->
   <script src="lessons.js"></script>
   <script src="quizzes.js"></script>
+  <script src="readings.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

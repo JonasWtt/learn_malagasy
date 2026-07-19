@@ -7,6 +7,7 @@
 
   // ======== STATE ========
   let currentLesson = null;
+  let currentReading = null; // when viewing a reading, this is set and currentLesson is null
   let currentCardIndex = 0;
   let currentQuizIndex = 0;
   let quizScore = 0;
@@ -119,6 +120,14 @@
   // Vocab
   const vocabList = $('vocab-list');
 
+  // Readings
+  const readingsGrid = $('readings-grid');
+  const readingText = $('reading-text');
+  const readingTranslation = $('reading-translation');
+  const readingToggleTrans = $('reading-toggle-trans');
+  const glossaryList = $('glossary-list');
+  const readingLevelEl = document.querySelector('.reading-level');
+
   // Quiz
   const quizCounter = $('quiz-counter');
   const quizProgressFill = $('quiz-progress-fill');
@@ -160,7 +169,10 @@
     document.body.setAttribute('data-lang', currentLanguage);
     // Re-render current view if in a lesson
     if (currentLesson) {
-      if (currentLesson.category === 'grammar' && currentLesson.content) {
+      if (currentReading) {
+        renderReading();
+        renderQuiz();
+      } else if (currentLesson.category === 'grammar' && currentLesson.content) {
         renderGrammar();
       } else {
         renderCard();
@@ -171,6 +183,7 @@
     // Re-render lesson list (descriptions, category labels)
     const activeFilter = document.querySelector('.category-btn.active');
     renderLessons(activeFilter ? activeFilter.dataset.filter : 'all');
+    renderReadings();
     // Update hero text
     updateHero();
     // Update toggle button text — show NEXT language flag
@@ -234,6 +247,11 @@
       filterVocabulary: 'Vocabulary',
       filterGrammar: 'Grammar',
       cardsLabel: ' cards',
+      showTranslation: '🌐 Show translation',
+      hideTranslation: '🌐 Hide translation',
+      tabReading: '📝 Text',
+      readingSectionTitle: '📖 Reading Comprehension',
+      readingSectionSub: 'Short texts with translation, glossary, and quiz questions.',
       footer: 'Content sourced from Peace Corps & academic linguistics resources. Built for 🇲🇬.',
     },
     de: {
@@ -270,6 +288,11 @@
       filterVocabulary: 'Vokabular',
       filterGrammar: 'Grammatik',
       cardsLabel: ' Karten',
+      showTranslation: '🌐 Übersetzung anzeigen',
+      hideTranslation: '🌐 Übersetzung verbergen',
+      tabReading: '📝 Text',
+      readingSectionTitle: '📖 Leseverstehen',
+      readingSectionSub: 'Kurze Texte mit Übersetzung, Glossar und Quizfragen.',
       footer: 'Inhalte von Peace Corps & akademischen Linguistik-Ressourcen. Gebaut für 🇲🇬.',
     },
     fr: {
@@ -306,6 +329,11 @@
       filterVocabulary: 'Vocabulaire',
       filterGrammar: 'Grammaire',
       cardsLabel: ' cartes',
+      showTranslation: '🌐 Afficher la traduction',
+      hideTranslation: '🌐 Masquer la traduction',
+      tabReading: '📝 Texte',
+      readingSectionTitle: '📖 Compréhension écrite',
+      readingSectionSub: 'Textes courts avec traduction, glossaire et questions de compréhension.',
       footer: 'Contenu des Peace Corps et ressources linguistiques académiques. Fait pour 🇲🇬.',
     }
   };
@@ -320,6 +348,7 @@
   function init() {
     navReset();
     renderLessons('all');
+    renderReadings();
     bindEvents();
     document.body.setAttribute('data-lang', 'en');
   }
@@ -348,19 +377,123 @@
     });
   }
 
+  // ======== RENDER READINGS ========
+  function renderReadings() {
+    if (!readingsGrid) return;
+    // Translate section heading
+    const h = $('readings-heading'); if (h) h.textContent = t('readingSectionTitle');
+    const s = $('readings-sub'); if (s) s.textContent = t('readingSectionSub');
+    // Translate reading tab button label
+    const readingTabBtn = document.querySelector('.tab-btn[data-tab="reading"]');
+    if (readingTabBtn) readingTabBtn.textContent = t('tabReading');
+
+    readingsGrid.innerHTML = '';
+    const list = (typeof READINGS !== 'undefined') ? READINGS : [];
+    list.forEach(reading => {
+      const card = document.createElement('div');
+      card.className = 'lesson-card reading-card';
+      card.innerHTML = `
+        <span class="emoji">${reading.emoji}</span>
+        <h3>${reading.title}</h3>
+        <p class="desc">${reading.description}</p>
+        <div class="meta">
+          <span class="badge reading">${reading.level}</span>
+          <span class="badge">${reading.quiz?.length || 0} Qs</span>
+        </div>
+      `;
+      addTapHandler(card, () => openReading(reading));
+      readingsGrid.appendChild(card);
+    });
+  }
+
+  // ======== OPEN READING ========
+  function openReading(reading) {
+    const descendingFromHome = !lessonListView.classList.contains('hidden');
+    if (descendingFromHome) pushBackHandler(backToList);
+
+    currentReading = reading;
+    currentLesson = { id: reading.id, title: reading.title, emoji: reading.emoji, description: reading.description, quiz: reading.quiz };
+    currentQuizIndex = 0;
+    quizScore = 0;
+
+    // Title + description
+    lessonTitle.textContent = `${reading.emoji} ${reading.title}`;
+    lessonDesc.textContent = reading.description;
+
+    // Tab layout: show only Text + Quiz (hide Cards + Vocab tabs)
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      const tab = btn.dataset.tab;
+      btn.style.display = (tab === 'reading' || tab === 'quiz') ? '' : 'none';
+    });
+    // Switch to reading tab
+    switchTab('reading');
+
+    renderReading();
+    renderQuiz();
+
+    // Switch views
+    lessonListView.classList.add('hidden');
+    lessonView.classList.remove('hidden');
+    window.scrollTo(0, 0);
+  }
+
+  // ======== RENDER READING CONTENT ========
+  function renderReading() {
+    if (!currentReading) return;
+    const r = currentReading;
+    const lang = currentLanguage; // 'en', 'de', or 'fr'
+
+    if (readingLevelEl) readingLevelEl.textContent = r.level;
+
+    // Malagasy text (always shown)
+    readingText.textContent = r.text.mg;
+
+    // Translation (hidden by default; shown in current UI language)
+    let trans = r.text[lang] || r.text.en || '';
+    readingTranslation.textContent = trans;
+    readingTranslation.classList.add('hidden');
+    readingToggleTrans.textContent = t('showTranslation');
+
+    // Glossary: show translation in current UI language
+    glossaryList.innerHTML = '';
+    (r.glossary || []).forEach(g => {
+      const item = document.createElement('div');
+      item.className = 'vocab-item';
+      let transText = g.en;
+      if (lang === 'de' && g.de) transText = g.de;
+      else if (lang === 'fr' && g.fr) transText = g.fr;
+      item.innerHTML = `<span class="word">${g.mg}</span><span class="trans">${transText}</span>`;
+      glossaryList.appendChild(item);
+    });
+  }
+
+  function toggleReadingTranslation() {
+    if (!currentReading) return;
+    const hidden = readingTranslation.classList.toggle('hidden');
+    readingToggleTrans.textContent = hidden ? t('showTranslation') : t('hideTranslation');
+  }
+
   // ======== OPEN LESSON ========
   function openLesson(lesson) {
-    // Only count this as a new navigation level when we're coming from the
-    // home list. If a lesson is already open (e.g. navigating lesson→lesson
-    // via search), we're replacing, not descending — don't push another level.
     const descendingFromHome = !lessonListView.classList.contains('hidden');
     if (descendingFromHome) pushBackHandler(backToList);
 
     currentLesson = lesson;
+    currentReading = null; // no longer viewing a reading
     currentCardIndex = 0;
     currentQuizIndex = 0;
     quizScore = 0;
     isFlipped = false;
+
+    // Restore all tab visibility (openReading hides Cards + Vocab).
+    // The reading tab is hidden by default for regular lessons.
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      if (btn.dataset.tab === 'reading') {
+        btn.style.display = 'none';
+      } else {
+        btn.style.display = '';
+      }
+    });
 
     // Update title
     lessonTitle.textContent = `${lesson.emoji} ${lesson.title}`;
@@ -396,6 +529,11 @@
     lessonView.classList.add('hidden');
     lessonListView.classList.remove('hidden');
     currentLesson = null;
+    currentReading = null;
+    // Restore all tab visibility for next time (reading tab stays hidden by default)
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.style.display = (btn.dataset.tab === 'reading') ? 'none' : '';
+    });
     window.scrollTo(0, 0);
   }
 
@@ -749,6 +887,9 @@
     // Quiz
     btnQuizNext.addEventListener('click', nextQuiz);
     btnQuizRetry.addEventListener('click', retryQuiz);
+
+    // Reading translation toggle
+    if (readingToggleTrans) readingToggleTrans.addEventListener('click', toggleReadingTranslation);
 
     // Language toggle
     const langToggle = document.getElementById('lang-toggle');
