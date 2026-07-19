@@ -186,6 +186,12 @@
     renderReadings();
     // Update hero text
     updateHero();
+    // Translate footer
+    const footer = document.querySelector('.app-footer p');
+    if (footer) footer.textContent = t('footer');
+    // Translate back button
+    const backBtn = $('back-to-list');
+    if (backBtn) backBtn.textContent = t('backToList');
     // Update toggle button text — show NEXT language flag
     const langBtn = document.getElementById('lang-toggle');
     if (langBtn) {
@@ -349,6 +355,11 @@
     navReset();
     renderLessons('all');
     renderReadings();
+    // Translate footer + back button to default language
+    const footer = document.querySelector('.app-footer p');
+    if (footer) footer.textContent = t('footer');
+    const backBtn = $('back-to-list');
+    if (backBtn) backBtn.textContent = t('backToList');
     bindEvents();
     document.body.setAttribute('data-lang', 'en');
   }
@@ -356,6 +367,11 @@
   // ======== RENDER LESSON LIST ========
   function renderLessons(filter) {
     lessonsGrid.innerHTML = '';
+    // Translate category filter buttons
+    categoryBtns.forEach(btn => {
+      const key = 'filter' + btn.dataset.filter.charAt(0).toUpperCase() + btn.dataset.filter.slice(1);
+      btn.textContent = t(key);
+    });
     const filtered = filter === 'all'
       ? LESSONS
       : LESSONS.filter(l => l.category === filter);

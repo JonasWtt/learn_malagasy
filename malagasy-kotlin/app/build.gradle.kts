@@ -11,8 +11,8 @@ android {
         applicationId = "com.jonas.malagasy"
         minSdk = 24
         targetSdk = 35
-        versionCode = 57
-        versionName = "5.4.2"
+        versionCode = 58
+        versionName = "5.4.3"
     }
 
     buildTypes {
