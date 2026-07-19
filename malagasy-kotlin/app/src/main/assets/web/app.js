@@ -379,12 +379,21 @@
     filtered.forEach(lesson => {
       const card = document.createElement('div');
       card.className = 'lesson-card';
+      // Translated title/description for current UI language
+      let title = lesson.title;
+      let desc = lesson.description;
+      if (currentLanguage === 'de' && lesson.title_de) title = lesson.title_de;
+      else if (currentLanguage === 'fr' && lesson.title_fr) title = lesson.title_fr;
+      if (currentLanguage === 'de' && lesson.description_de) desc = lesson.description_de;
+      else if (currentLanguage === 'fr' && lesson.description_fr) desc = lesson.description_fr;
+      // Translate category badge
+      const catKey = 'filter' + lesson.category.charAt(0).toUpperCase() + lesson.category.slice(1);
       card.innerHTML = `
         <span class="emoji">${lesson.emoji}</span>
-        <h3>${lesson.title}</h3>
-        <p class="desc">${lesson.description}</p>
+        <h3>${title}</h3>
+        <p class="desc">${desc}</p>
         <div class="meta">
-          <span class="badge ${lesson.category}">${lesson.category}</span>
+          <span class="badge ${lesson.category}">${t(catKey)}</span>
           <span class="badge">${lesson.cards?.length || 0}${t('cardsLabel')}</span>
         </div>
       `;
@@ -511,9 +520,15 @@
       }
     });
 
-    // Update title
-    lessonTitle.textContent = `${lesson.emoji} ${lesson.title}`;
-    lessonDesc.textContent = lesson.description;
+    // Update title (translated for current UI language)
+    let lTitle = lesson.title;
+    let lDesc = lesson.description;
+    if (currentLanguage === 'de' && lesson.title_de) lTitle = lesson.title_de;
+    else if (currentLanguage === 'fr' && lesson.title_fr) lTitle = lesson.title_fr;
+    if (currentLanguage === 'de' && lesson.description_de) lDesc = lesson.description_de;
+    else if (currentLanguage === 'fr' && lesson.description_fr) lDesc = lesson.description_fr;
+    lessonTitle.textContent = `${lesson.emoji} ${lTitle}`;
+    lessonDesc.textContent = lDesc;
 
     // Update tab labels based on category
     const isGrammar = lesson.category === 'grammar';

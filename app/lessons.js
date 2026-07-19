@@ -10,6 +10,10 @@ const LESSONS = [
     "emoji": "🇲🇬",
     "category": "basics",
     "description": "Overview of the language, its origins, and what makes it unique.",
+        "title_de": "Einführung in Malagasy",
+        "title_fr": "Introduction au malgache",
+        "description_de": "Überblick über die Sprache, ihre Ursprünge und was sie einzigartig macht.",
+        "description_fr": "Aperçu de la langue, de ses origines et de ce qui la rend unique.",
     "cards": [
       {
         "front": "Austronesian language from Southeast Asia, settled Madagascar ~2,000 years ago.",
@@ -75,6 +79,10 @@ const LESSONS = [
     "emoji": "🔤",
     "category": "basics",
     "description": "Learn the 4 vowel sounds and key consonant clusters.",
+        "title_de": "Alphabet & Laute",
+        "title_fr": "L'alphabet et les sons",
+        "description_de": "Lernen Sie die 4 Vokal-Laute und wichtige Konsonantencluster.",
+        "description_fr": "Apprenez les 4 sons vocaliques et les principales consonnes composées.",
     "cards": [
       {
         "front": "Sounds like 'a' in Father. Examples: Salama, Manana",
@@ -230,6 +238,10 @@ const LESSONS = [
     "emoji": "👋",
     "category": "conversation",
     "description": "Essential greetings and polite expressions.",
+        "title_de": "Begrüßungen",
+        "title_fr": "Salutations",
+        "description_de": "Wichtige Begrüßungen und höfliche Ausdrücke.",
+        "description_fr": "Salutations essentielles et expressions de politesse.",
     "cards": [
       {
         "front": "Hello!",
@@ -433,6 +445,10 @@ const LESSONS = [
     "emoji": "🤝",
     "category": "conversation",
     "description": "Introducing yourself and asking about others.",
+        "title_de": "Vorstellungen",
+        "title_fr": "Présentations",
+        "description_de": "Sich selbst vorstellen und nach anderen fragen.",
+        "description_fr": "Se présenter et poser des questions sur les autres.",
     "cards": [
       {
         "front": "What is your name?",
@@ -630,6 +646,10 @@ const LESSONS = [
     "emoji": "👨‍👩‍👧‍👦",
     "category": "vocabulary",
     "description": "Family members and relationships.",
+        "title_de": "Familie",
+        "title_fr": "La famille",
+        "description_de": "Familienmitglieder und Verwandtschaftsbeziehungen.",
+        "description_fr": "Membres de la famille et relations.",
     "cards": [
       {
         "front": "Family",
@@ -935,6 +955,10 @@ const LESSONS = [
     "emoji": "📝",
     "category": "grammar",
     "description": "Learn VOS word order, pronouns, negation, and conjugation.",
+        "title_de": "Grundlegende Satzstruktur",
+        "title_fr": "Structure de base des phrases",
+        "description_de": "Lernen Sie die VOS-Wortstellung, Pronomen, Verneinung und Konjugation.",
+        "description_fr": "Apprenez l'ordre des mots VOS, les pronoms, la négation et la conjugaison.",
     "cards": [
       {
         "front": "I / I am",
@@ -1204,6 +1228,10 @@ const LESSONS = [
     "emoji": "🍽️",
     "category": "conversation",
     "description": "Expressing needs, feelings, and asking for things.",
+        "title_de": "Grundbedürfnisse",
+        "title_fr": "Besoins de base",
+        "description_de": "Bedürfnisse ausdrücken, Gefühle äußern und um Dinge bitten.",
+        "description_fr": "Exprimer des besoins, des sentiments et demander des choses.",
     "cards": [
       {
         "front": "I am tired.",
@@ -1521,6 +1549,10 @@ const LESSONS = [
     "emoji": "❓",
     "category": "grammar",
     "description": "Essential question words and example sentences.",
+        "title_de": "Fragewörter",
+        "title_fr": "Mots interrogatifs",
+        "description_de": "Wichtige Fragewörter und Beispielsätze.",
+        "description_fr": "Mots interrogatifs essentiels et phrases d'exemple.",
     "cards": [
       {
         "front": "Yes or no question marker",
@@ -1748,6 +1780,10 @@ const LESSONS = [
     "emoji": "🙏",
     "category": "conversation",
     "description": "Common commands, requests, and polite expressions.",
+        "title_de": "Befehle & Bitten",
+        "title_fr": "Ordres et demandes",
+        "description_de": "Häufige Befehle, Bitten und höfliche Ausdrücke.",
+        "description_fr": "Ordres courants, demandes et expressions de politesse.",
     "cards": [
       {
         "front": "Yes",
@@ -2005,6 +2041,10 @@ const LESSONS = [
     "emoji": "🔢",
     "category": "vocabulary",
     "description": "Counting in Malagasy — read from right to left!",
+        "title_de": "Zahlen",
+        "title_fr": "Les nombres",
+        "description_de": "Zählen auf Malagasy — von rechts nach links lesen!",
+        "description_fr": "Compter en malgache — à lire de droite à gauche !",
     "cards": [
       {
         "front": "One",
@@ -2340,6 +2380,10 @@ const LESSONS = [
     "emoji": "🍛",
     "category": "vocabulary",
     "description": "Essential food vocabulary for daily meals.",
+        "title_de": "Essen & Trinken",
+        "title_fr": "Nourriture et boissons",
+        "description_de": "Wichtiger Wortschatz rund um Essen für die täglichen Mahlzeiten.",
+        "description_fr": "Vocabulaire essentiel de la nourriture pour les repas quotidiens.",
     "cards": [
       {
         "front": "Food",
@@ -2795,6 +2839,10 @@ const LESSONS = [
     "emoji": "📅",
     "category": "vocabulary",
     "description": "Days of the week and parts of the day.",
+        "title_de": "Tage & Zeit",
+        "title_fr": "Jours et temps",
+        "description_de": "Wochentage und Tageszeiten.",
+        "description_fr": "Jours de la semaine et moments de la journée.",
     "cards": [
       {
         "front": "Monday",
@@ -3082,6 +3130,10 @@ const LESSONS = [
     "emoji": "😊",
     "category": "vocabulary",
     "description": "Expressing emotions and reactions.",
+        "title_de": "Gefühle & Emotionen",
+        "title_fr": "Sentiments et émotions",
+        "description_de": "Emotionen und Reaktionen ausdrücken.",
+        "description_fr": "Exprimer des émotions et des réactions.",
     "cards": [
       {
         "front": "That makes me happy.",
@@ -3381,6 +3433,10 @@ const LESSONS = [
     "emoji": "🎨",
     "category": "vocabulary",
     "description": "Color vocabulary with shades.",
+        "title_de": "Farben",
+        "title_fr": "Les couleurs",
+        "description_de": "Farbwortschatz mit Farbschattierungen.",
+        "description_fr": "Vocabulaire des couleurs avec nuances.",
     "cards": [
       {
         "front": "Colors",
@@ -3620,6 +3676,10 @@ const LESSONS = [
     "emoji": "🏠",
     "category": "vocabulary",
     "description": "Items found in a typical home.",
+        "title_de": "Haus & Möbel",
+        "title_fr": "Maison et mobilier",
+        "description_de": "Gegenstände in einem typischen Zuhause.",
+        "description_fr": "Objets que l'on trouve dans une maison typique.",
     "cards": [
       {
         "front": "Chair",
@@ -3931,6 +3991,10 @@ const LESSONS = [
     "emoji": "⚡",
     "category": "grammar",
     "description": "Master verb tenses and conjugation patterns in Malagasy.",
+        "title_de": "Verben & Konjugation",
+        "title_fr": "Verbes et conjugaison",
+        "description_de": "Meistern Sie die Verbzeiten und Konjugationsmuster im Malagasy.",
+        "description_fr": "Maîtrisez les temps verbaux et les modèles de conjugaison en malgache.",
     "cards": [
       {
         "front": "Present tense: mi- prefix. Example: mihinana (to eat)",
@@ -4212,6 +4276,10 @@ const LESSONS = [
     "emoji": "👤",
     "category": "grammar",
     "description": "Personal pronouns, demonstratives, and possession patterns.",
+        "title_de": "Pronomen & Besitz",
+        "title_fr": "Pronoms et possession",
+        "description_de": "Personalpronomen, Demonstrativpronomen und Besitzverhältnisse.",
+        "description_fr": "Pronoms personnels, démonstratifs et modèles de possession.",
     "cards": [
       {
         "front": "Aho = I / I am",
@@ -4487,6 +4555,10 @@ const LESSONS = [
     "emoji": "✨",
     "category": "grammar",
     "description": "How adjectives work in Malagasy — placement, intensifiers, and comparison.",
+        "title_de": "Adjektive & Beschreibungen",
+        "title_fr": "Adjectifs et descriptions",
+        "description_de": "Wie Adjektive im Malagasy funktionieren — Stellung, Verstärkungen und Vergleich.",
+        "description_fr": "Le fonctionnement des adjectifs en malgache — placement, intensificateurs et comparaison.",
     "cards": [
       {
         "front": "Adjectives follow the noun. Example: trano lehibe = big house",
@@ -4768,6 +4840,10 @@ const LESSONS = [
     "emoji": "📍",
     "category": "grammar",
     "description": "Spatial and temporal prepositions for describing where and when things happen.",
+        "title_de": "Präpositionen & Ort",
+        "title_fr": "Prépositions et localisation",
+        "description_de": "Räumliche und zeitliche Präpositionen, um zu beschreiben, wo und wann Dinge geschehen.",
+        "description_fr": "Prépositions spatiales et temporelles pour décrire où et quand les choses se produisent.",
     "cards": [
       {
         "front": "Amin'ny = at / in / on. General location marker.",
@@ -5049,6 +5125,10 @@ const LESSONS = [
     "emoji": "🚫",
     "category": "grammar",
     "description": "How to negate sentences, form questions, and use modifiers.",
+        "title_de": "Verneinung & Modifikatoren",
+        "title_fr": "Négation et modificateurs",
+        "description_de": "Wie man Sätze verneint, Fragen bildet und Modifikatoren verwendet.",
+        "description_fr": "Comment nier des phrases, former des questions et utiliser des modificateurs.",
     "cards": [
       {
         "front": "Tsy = no / not. Placed before the verb or adjective.",
@@ -5330,6 +5410,10 @@ const LESSONS = [
     "emoji": "🩺",
     "category": "vocabulary",
     "description": "Body parts, symptoms, and medical phrases for emergencies and doctor visits.",
+        "title_de": "Körperteile & Gesundheit",
+        "title_fr": "Parties du corps et santé",
+        "description_de": "Körperteile, Symptome und medizinische Wendungen für Notfälle und Arztbesuche.",
+        "description_fr": "Parties du corps, symptômes et expressions médicales pour les urgences et les visites chez le médecin.",
     "cards": [
       {
         "front": "Head",
@@ -5701,6 +5785,10 @@ const LESSONS = [
     "emoji": "🛍️",
     "category": "conversation",
     "description": "Market phrases, prices, and bargaining — essential for Madagascar's markets.",
+        "title_de": "Einkaufen & Handeln",
+        "title_fr": "Shopping et marchandage",
+        "description_de": "Marktsprache, Preise und Handeln — unverzichtbar für die Märkte Madagaskars.",
+        "description_fr": "Phrases de marché, prix et marchandage — essentiels pour les marchés de Madagascar.",
     "cards": [
       {
         "front": "How much is this?",
@@ -5982,6 +6070,10 @@ const LESSONS = [
     "emoji": "🧭",
     "category": "conversation",
     "description": "Getting around Madagascar — directions, taxi-brousse, and asking where things are.",
+        "title_de": "Wegbeschreibungen & Transport",
+        "title_fr": "Directions et transports",
+        "description_de": "Unterwegs in Madagaskar — Wegbeschreibungen, taxi-brousse und nach dem Weg fragen.",
+        "description_fr": "Se déplacer à Madagascar — directions, taxi-brousse et demander où se trouvent les choses.",
     "cards": [
       {
         "front": "Where is ...?",
@@ -6263,6 +6355,10 @@ const LESSONS = [
     "emoji": "🌦️",
     "category": "vocabulary",
     "description": "Weather terms, seasons, and climate — important for planning in Madagascar.",
+        "title_de": "Wetter & Jahreszeiten",
+        "title_fr": "Météo et saisons",
+        "description_de": "Wetterbegriffe, Jahreszeiten und Klima — wichtig für die Planung in Madagaskar.",
+        "description_fr": "Termes météorologiques, saisons et climat — importants pour planifier à Madagascar.",
     "cards": [
       {
         "front": "It's hot.",
@@ -6544,6 +6640,10 @@ const LESSONS = [
     "emoji": "👕",
     "category": "vocabulary",
     "description": "Clothes, accessories, and the traditional Malagasy lamba.",
+        "title_de": "Kleidung & Tracht",
+        "title_fr": "Vêtements et tenues",
+        "description_de": "Kleidung, Accessoires und der traditionelle malagasy lamba.",
+        "description_fr": "Vêtements, accessoires et le lamba malgache traditionnel.",
     "cards": [
       {
         "front": "Shirt",
@@ -6825,6 +6925,10 @@ const LESSONS = [
     "emoji": "🐒",
     "category": "vocabulary",
     "description": "Madagascar's unique wildlife, domestic animals, and nature vocabulary.",
+        "title_de": "Tiere & Natur",
+        "title_fr": "Animaux et nature",
+        "description_de": "Die einzigartige Tierwelt Madagaskars, Haustiere und Naturwortschatz.",
+        "description_fr": "Faune unique de Madagascar, animaux domestiques et vocabulaire de la nature.",
     "cards": [
       {
         "front": "Lemur",
@@ -7166,6 +7270,10 @@ const LESSONS = [
     "emoji": "💵",
     "category": "vocabulary",
     "description": "Ariary currency, counting money, and practical number usage in daily life.",
+        "title_de": "Geld & praktische Zahlen",
+        "title_fr": "Argent et nombres pratiques",
+        "description_de": "Ariary-Währung, Geld zählen und praktischer Zahlengebrauch im Alltag.",
+        "description_fr": "Monnaie Ariary, compter l'argent et usage pratique des nombres dans la vie quotidienne.",
     "cards": [
       {
         "front": "Money",
@@ -7447,6 +7555,10 @@ const LESSONS = [
     "emoji": "🕐",
     "category": "conversation",
     "description": "Telling time, making appointments, and scheduling in Malagasy.",
+        "title_de": "Zeit & Terminplanung",
+        "title_fr": "Heure et planification",
+        "description_de": "Uhrzeit nennen, Termine vereinbaren und Planen auf Malagasy.",
+        "description_fr": "Lire l'heure, prendre des rendez-vous et planifier en malgache.",
     "cards": [
       {
         "front": "What time is it?",
@@ -7728,6 +7840,10 @@ const LESSONS = [
     "emoji": "⚖️",
     "category": "grammar",
     "description": "Comparing things — better/worse, cheaper/more expensive, biggest/smallest.",
+        "title_de": "Vergleiche & Superlative",
+        "title_fr": "Comparaisons et superlatifs",
+        "description_de": "Dinge vergleichen — besser/schlechter, billiger/teurer, am größten/am kleinsten.",
+        "description_fr": "Comparer des choses — meilleur/pire, moins cher/plus cher, plus grand/plus petit.",
     "cards": [
       {
         "front": "Bigger than",
