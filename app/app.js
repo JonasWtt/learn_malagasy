@@ -224,7 +224,7 @@
       retry: 'Retry',
       quizComplete: '🎉 Quiz Complete!',
       heroTitle: 'Tsara be, Mpiara-miasa!',
-      heroSubtitle: '20 curated lessons with flashcards, vocabulary, and quizzes. Ready for Madagascar?',
+      heroSubtitle: '29 curated lessons with flashcards, vocabulary, and quizzes. Ready for Madagascar?',
       heroStatsLessons: 'lessons',
       heroStatsCards: 'cards',
       heroStatsQuiz: 'quiz questions',
@@ -239,28 +239,28 @@
     de: {
       flip: 'Zum Umdrehen tippen ↻',
       flipBack: 'Zum Umdrehen tippen ↺',
-      noVocab: 'Noch kein Vokabular fuer diese Lektion.',
-      noQuiz: 'Noch keine Quizfragen fuer diese Lektion.',
-      noContent: 'Kein Grammatik-Inhalt verfuegbar.',
+      noVocab: 'Noch kein Vokabular für diese Lektion.',
+      noQuiz: 'Noch keine Quizfragen für diese Lektion.',
+      noContent: 'Kein Grammatik-Inhalt verfügbar.',
       correct: '✅ Richtig! Gut gemacht.',
       wrong: '❌ Falsch. Die Antwort ist: ',
-      quizPerfect: 'Perfekte Punktzahl! {0}/{1} — Du bist bereit fuer Madagaskar! 🎉',
+      quizPerfect: 'Perfekte Punktzahl! {0}/{1} — Du bist bereit für Madagaskar! 🎉',
       quizGreat: 'Gut gemacht! {0}/{1} — fast geschafft! 🔥',
-      quizOkay: 'Nicht schlecht! {0}/{1} — weiter ueben! 💪',
+      quizOkay: 'Nicht schlecht! {0}/{1} — weiter üben! 💪',
       quizLow: 'Du hast {0}/{1}. Sieh dir die Karten an und versuch es nochmal! 📚',
       searchPlaceholder: 'Suche Malagasy oder Deutsch...',
-      noSearchResults: 'Keine Woerter gefunden. Versuche eine andere Suche.',
+      noSearchResults: 'Keine Wörter gefunden. Versuche eine andere Suche.',
       backToList: '← Alle Lektionen',
       tabCards: '🗂️ Karten',
       tabText: '📝 Text',
       tabVocab: '📖 Vokabular',
       tabQuiz: '✅ Quiz',
       next: 'Weiter →',
-      prev: '← Zurueck',
+      prev: '← Zurück',
       retry: 'Nochmal',
       quizComplete: '🎉 Quiz Abgeschlossen!',
       heroTitle: 'Tsara be, Mpiara-miasa!',
-      heroSubtitle: '20 kuratierte Lektionen mit Karteikarten, Vokabular und Quiz. Bereit fuer Madagaskar?',
+      heroSubtitle: '29 kuratierte Lektionen mit Karteikarten, Vokabular und Quiz. Bereit für Madagaskar?',
       heroStatsLessons: 'Lektionen',
       heroStatsCards: 'Karten',
       heroStatsQuiz: 'Quizfragen',
@@ -270,7 +270,7 @@
       filterVocabulary: 'Vokabular',
       filterGrammar: 'Grammatik',
       cardsLabel: ' Karten',
-      footer: 'Inhalte von Peace Corps & akademischen Linguistik-Ressourcen. Gebaut fuer 🇲🇬.',
+      footer: 'Inhalte von Peace Corps & akademischen Linguistik-Ressourcen. Gebaut für 🇲🇬.',
     },
     fr: {
       flip: 'Touchez pour retourner ↻',
@@ -546,7 +546,7 @@
 
     // Reset UI
     quizScoreEl.classList.add('hidden');
-    $('quiz-box')?.classList.remove('hidden');
+    document.querySelector('.quiz-box')?.classList.remove('hidden');
 
     if (total === 0) {
       quizQuestion.textContent = t('noQuiz');
